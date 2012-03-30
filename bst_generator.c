@@ -164,6 +164,8 @@ is_bst(struct node* root, int max, int min) {
 
 int
 main(int argc, char** argv) {
+  srand(time(NULL));
+
   struct node* root = generate_bst();
   printf("Pre-order: ");
   pre_order_bst(root);
