@@ -7,13 +7,13 @@
 #include <unistd.h>
 #include <assert.h>
 
-#define SIZE_BUF 100
+#define SIZE_BUF 300
 
 void print_event(uint32_t mask);
 
 int
 main(int argc, char** argv) {
-  const char const* file_monitored = "./asdf";
+  const char const* FILE_MONITORED = "./asdf";
 
   int fd_monitor = inotify_init1(0);
   if (fd_monitor == -1) {
@@ -21,27 +21,24 @@ main(int argc, char** argv) {
     exit(EXIT_FAILURE);
   }
 
-  int desc = inotify_add_watch(fd_monitor, file_monitored, IN_ALL_EVENTS);
+  int desc = inotify_add_watch(fd_monitor, FILE_MONITORED, IN_ALL_EVENTS);
   if (desc == -1) {
     perror("inotify_add_watch()");
     exit(EXIT_FAILURE);
   }
 
-  /*
-   * add SIZE_BUF since event.name[] may have different lengths.
-   * adjust SIZE_BUF as necessary.
-   */
-  size_t size_event = sizeof(struct inotify_event) + SIZE_BUF;
-  struct inotify_event event;
+  char* buf[SIZE_BUF];
+  struct inotify_event* event;
   int bytes_read;
   while (1) {
-    bytes_read = read(fd_monitor, &event, size_event);
+    bytes_read = read(fd_monitor, buf, SIZE_BUF);
     if (bytes_read == -1) {
       perror("read()");
       exit(EXIT_FAILURE);
     }
-    assert(bytes_read <= size_event);
-    print_event(event.mask);
+    assert(bytes_read <= SIZE_BUF);
+    event = (struct inotify_event*)buf;
+    print_event(event->mask);
   }
 
   return EXIT_SUCCESS;
