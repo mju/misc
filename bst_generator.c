@@ -3,17 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
-
-/* since it's a binary search tree, make sure NUM_NODES <= MAX_INT + 1 */
-#define NUM_NODES 10
-#define MAX_INT 1000
-#define NON_ELEMENT -1
-
-struct node {
-  int d;
-  struct node* left;
-  struct node* right;
-};
+#include "bst_generator.h"
 
 struct node*
 create_node_bst(int d) {
@@ -57,7 +47,7 @@ insert_bst(struct node** root, int d) {
 }
 
 struct node*
-generate_bst(void) {
+generate_bst() {
   struct node* root = NULL;
   int d;
   int i = 0;
@@ -68,6 +58,16 @@ generate_bst(void) {
     }
   }
   return root;
+}
+
+void
+destruct_bst(struct node* root) {
+  if (root == NULL) {
+    return;
+  }
+  destruct_bst(root->left);
+  destruct_bst(root->right);
+  free(root);
 }
 
 /*
@@ -146,7 +146,7 @@ level_order_bst(struct node* root) {
  * max and min should initially be NON_ELEMENT
  */
 int
-is_bst(struct node* root, int max, int min) {
+_is_bst(struct node* root, int max, int min) {
   if (root == NULL) {
     return 1;
   }
@@ -157,11 +157,17 @@ is_bst(struct node* root, int max, int min) {
     return 0;
   }
   return (
-    is_bst(root->left, root->d, min) &&
-    is_bst(root->right, max, root->d)
+    _is_bst(root->left, root->d, min) &&
+    _is_bst(root->right, max, root->d)
   );
 }
 
+int
+is_bst(struct node* root) {
+  return _is_bst(root, NON_ELEMENT, NON_ELEMENT);
+}
+
+/*
 int
 main(int argc, char** argv) {
   srand(time(NULL));
@@ -180,7 +186,9 @@ main(int argc, char** argv) {
   level_order_bst(root);
   printf("\n");
   printf(
-    "Is a binary search tree? %d\n", is_bst(root, NON_ELEMENT, NON_ELEMENT)
+    "Is a binary search tree? %d\n", is_bst(root)
   );
+  destruct_bst(root);
   return 0;
 }
+*/
