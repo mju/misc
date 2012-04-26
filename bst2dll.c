@@ -6,8 +6,6 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdlib.h>
-#include <time.h>
 #include "bst_generator.h"
 
 /* doubly-linked list. */
@@ -24,10 +22,9 @@ void destruct_dll(struct dll list);
 
 int
 main(int argc, char** argv) {
-  /* the bst library should take an argument about doing this or not. */
-  srand(time(NULL));
+  random_bst();
 
-  struct node* bst_root = generate_bst();
+  struct node* bst_root = generate_bst(20);
   printf("Pre-order\n");
   pre_order_bst(bst_root);
   printf("\n");

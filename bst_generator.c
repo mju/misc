@@ -5,6 +5,11 @@
 #include <assert.h>
 #include "bst_generator.h"
 
+void
+random_bst() {
+  srand(time(NULL));
+}
+
 struct node*
 create_node_bst(int d) {
   struct node* n = (struct node*)malloc(sizeof(struct node));
@@ -47,11 +52,14 @@ insert_bst(struct node** root, int d) {
 }
 
 struct node*
-generate_bst() {
+generate_bst(int num_nodes) {
+  assert(MAX_NUM_NODES <= MAX_INT);
+  assert(num_nodes <= MAX_NUM_NODES);
+
   struct node* root = NULL;
   int d;
   int i = 0;
-  while (i < NUM_NODES) {
+  while (i < num_nodes) {
     d = rand() % (MAX_INT + 1);
     if (insert_bst(&root, d)) {
       i++;
@@ -120,8 +128,8 @@ in_order_bst(struct node* root) {
 
 void
 level_order_bst(struct node* root) {
-  struct node* queue[NUM_NODES];
-  int levels[NUM_NODES];
+  struct node* queue[MAX_NUM_NODES];
+  int levels[MAX_NUM_NODES];
   int level = 0;
   int front = 0;
   int rear = 0;
@@ -170,9 +178,8 @@ is_bst(struct node* root) {
 /*
 int
 main(int argc, char** argv) {
-  srand(time(NULL));
-
-  struct node* root = generate_bst();
+  random_bst();
+  struct node* root = generate_bst(10);
   printf("Pre-order: ");
   pre_order_bst(root);
   printf("\n");
